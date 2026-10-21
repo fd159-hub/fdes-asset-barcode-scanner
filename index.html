@@ -5,11 +5,14 @@
 <header><div style="max-width:780px;margin:auto"><small>第一階段｜僅供掃碼驗證，不會更動財產資料</small><h1>復旦國小｜財產條碼測試</h1><small>手機相機掃描・辨識條碼格式・比對財產編號・匯出測試紀錄</small></div></header>
 <main>
 <section class="panel"><h2>① 財產標籤上的編號</h2><label for="expected">預期財產編號（請依現場標籤核對）</label><input id="expected" value="314010103-000838" autocapitalize="off" spellcheck="false"><p class="muted">預填值來自目前提供的標籤照片。測試其他標籤時請修改此欄。系統只比對字元，並不代表已連線至學校資料庫。</p></section>
-<section class="panel"><h2>② 掃描一維條碼</h2><div id="reader" aria-label="相機掃描預覽"></div><p id="scanHelp" class="muted">手機需透過 HTTPS 網址開啟並授權相機。條碼保持平整、對焦清晰，左右留白；建議橫向對準掃描區域。</p><div class="actions"><button id="startBtn">開啟相機掃描</button><button id="stopBtn" class="secondary" disabled>停止相機</button></div><div class="actions"><button id="fileBtn" class="secondary">改用照片辨識</button><input type="file" accept="image/*" id="fileInput" hidden></div><label for="manual">手動輸入解碼字串（測試比對功能）</label><input id="manual" placeholder="輸入掃碼槍或其他 App 讀到的原始字串" autocapitalize="off" spellcheck="false"><div class="actions"><button id="manualBtn" class="secondary">執行手動比對（非真實掃描）</button></div><p id="cameraError" class="muted" role="status"></p></section>
+<section class="panel"><h2>② 掃描一維條碼</h2><label for="cameraSelect">相機鏡頭（先停止相機才能切換）</label><select id="cameraSelect"><option value="">自動選擇後置相機</option></select>
+<div id="reader" aria-label="相機掃描預覽"><video id="preview" muted autoplay playsinline></video></div>
+<p id="scanDiagnostics" class="muted" role="status">v0.2｜完整解析度辨識｜相機啟動後顯示影像尺寸與辨識次數</p>
+<div id="zoomControls" hidden><label for="zoom">鏡頭倍率（僅支援的裝置顯示）</label><input id="zoom" type="range" min="1" max="3" step="0.1" value="1"></div><p id="scanHelp" class="muted">iPhone 請用 Safari 或 Chrome 開啟並允許相機。將整條條碼橫放在畫面中央、左右保留白邊，先從約 20～30 公分開始調整距離，直到影像清楚；不必讓條碼填滿畫面。若模糊，停止後可切換其他後置鏡頭。</p><div class="actions"><button id="startBtn">開啟相機掃描</button><button id="stopBtn" class="secondary" disabled>停止相機</button></div><div class="actions"><button id="fileBtn" class="secondary">改用照片辨識</button><input type="file" accept="image/*" id="fileInput" hidden></div><label for="manual">手動輸入解碼字串（測試比對功能）</label><input id="manual" placeholder="輸入掃碼槍或其他 App 讀到的原始字串" autocapitalize="off" spellcheck="false"><div class="actions"><button id="manualBtn" class="secondary">執行手動比對（非真實掃描）</button></div><p id="cameraError" class="muted" role="status"></p></section>
 <section class="panel"><h2>③ 解碼與比對結果</h2><div id="resultStatus" class="status" role="status">尚未掃描</div><label>條碼原始內容</label><div id="readout">—</div><div class="grid"><div><label>辨識格式</label><p id="format">—</p></div><div><label>比對結果</label><p id="compare">—</p></div></div><p class="muted" id="detail">完全相同才列為吻合。另顯示移除空格與連字號後的比較結果，供判斷編碼差異；不會自動把近似值視為吻合。</p><div class="actions"><button id="saveBtn" disabled>加入測試紀錄</button><button id="copyBtn" class="secondary" disabled>複製條碼內容</button></div></section>
 <section class="panel"><h2>④ 測試紀錄（僅存在這台裝置）</h2><p class="muted">建議測試不同年份及批次的 10～20 個財產標籤。紀錄暫存在瀏覽器 localStorage，清除瀏覽器資料可能會遺失，請定期匯出 CSV。不要放入人員個資。</p><div class="overflow"><table><thead><tr><th>時間</th><th>原始內容</th><th>格式</th><th>預期編號</th><th>結果</th><th></th></tr></thead><tbody id="rows"><tr><td colspan="6">尚無紀錄</td></tr></tbody></table></div><div class="actions"><button id="exportBtn">匯出 CSV（Excel 可開啟）</button><button id="clearBtn" class="secondary">清除紀錄</button></div></section>
-</main><footer>測試版 v0.1｜不需帳號・無後端連線・不自動上傳影像或掃描資料</footer>
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+</main><footer>測試版 v0.2｜不需帳號・無後端連線・不自動上傳影像或掃描資料｜<a href="./LICENSE-zxing-browser.txt">ZXing Browser MIT 授權</a>・<a href="./LICENSE-zxing-library.txt">ZXing Library Apache-2.0 授權</a></footer>
+<script src="./zxing-browser.min.js"></script>
 <script>
 (()=>{'use strict';
 const $=id=>document.getElementById(id), LS='fdes_asset_scan_tests_v01';
@@ -19,11 +22,159 @@ const normal=s=>String(s??'').replace(/[\s\-－–—]/g,'').toUpperCase();
 function compare(raw,exp){if(!exp.trim())return ['未設定預期編號','unset'];if(raw===exp)return ['完全吻合','match'];if(normal(raw)===normal(exp))return ['格式不同但去除空白／連字號後相同','normalized'];return ['不吻合','mismatch']}
 function present(raw,format,source){const expected=$('expected').value.trim(),[message,type]=compare(raw,expected);last={time:new Date().toISOString(),raw,format,expected,result:message,source};$('readout').textContent=raw;$('format').textContent=format;$('compare').textContent=message;$('resultStatus').className='status '+(type==='match'?'ok':type==='mismatch'?'bad':'warn');$('resultStatus').textContent=type==='match'?'✓ 與標籤上財產編號完全一致':type==='mismatch'?'⚠ 與預期財產編號不一致':message;$('detail').textContent='來源：'+source+'。'+(type==='normalized'?'格式接近不等於已證實相同，請人工確認原始字串。':type==='mismatch'?'請確認標籤編號是否輸入正確；亦可能是條碼另有內部編碼。':'請記錄多張不同批次標籤以驗證規則。');$('saveBtn').disabled=false;$('copyBtn').disabled=false;if(navigator.vibrate)navigator.vibrate(80)}
 function formatName(name){return String(name||'未知格式').replace(/^CODE_/,'CODE ').replaceAll('_',' ')}
-function hasLib(){if(typeof Html5Qrcode==='undefined'){$('cameraError').textContent='無法載入條碼辨識程式庫，請確認網路可連接 unpkg.com 後重新載入。';return false}return true}
-const fmts=()=>[Html5QrcodeSupportedFormats.CODE_128,Html5QrcodeSupportedFormats.CODE_39,Html5QrcodeSupportedFormats.CODE_93,Html5QrcodeSupportedFormats.CODABAR,Html5QrcodeSupportedFormats.EAN_13,Html5QrcodeSupportedFormats.EAN_8,Html5QrcodeSupportedFormats.ITF,Html5QrcodeSupportedFormats.UPC_A,Html5QrcodeSupportedFormats.UPC_E];
-async function stop(){if(!scanner||!running)return;try{await scanner.stop()}catch(e){console.warn(e)}running=false;$('startBtn').disabled=false;$('stopBtn').disabled=true}
-$('startBtn').onclick=async()=>{if(!hasLib())return;if(!window.isSecureContext){$('cameraError').textContent='必須從 HTTPS 網址開啟才能使用相機（localhost 例外）。';return}try{$('cameraError').textContent='正在要求相機權限…';scanner=scanner||new Html5Qrcode('reader',{formatsToSupport:fmts(),verbose:false});await scanner.start({facingMode:'environment'},{fps:10,qrbox:(w,h)=>({width:Math.floor(w*.89),height:Math.max(55,Math.min(130,Math.floor(h*.5)))}),aspectRatio:1.777778},(decoded,info)=>{const fmt=info?.result?.format?.formatName||'未知格式';if(last?.raw===decoded&&Date.now()-new Date(last.time).getTime()<2200)return;present(decoded,formatName(fmt),'相機掃描')},()=>{});running=true;$('startBtn').disabled=true;$('stopBtn').disabled=false;$('cameraError').textContent='相機已啟動。請對準條碼。'}catch(e){$('cameraError').textContent='相機啟動失敗：'+(e?.message||String(e))+'。請檢查相機權限，或改用照片辨識。';$('startBtn').disabled=false}};
-$('stopBtn').onclick=()=>stop();$('fileBtn').onclick=()=>{$('fileInput').click()};$('fileInput').onchange=async e=>{const file=e.target.files?.[0];if(!file||!hasLib())return;await stop();try{scanner=scanner||new Html5Qrcode('reader',{formatsToSupport:fmts(),verbose:false});const decoded=await scanner.scanFile(file,true);present(decoded,'照片辨識（格式未由 API 回傳）','圖片檔案');$('cameraError').textContent='照片辨識完成。'}catch(err){$('cameraError').textContent='照片未能解碼：'+(err?.message||String(err))+'。可重拍清晰且正面的近照。'}finally{e.target.value=''}};
+// ZXing browser 0.1.5 bundles @zxing/library. TRY_HARDER is enum value 3.
+const TRY_HARDER = 3;
+const decodeErrorKind = error => error?.getKind?.() || error?.name;
+let controls = null, busy = false, attempts = 0, startedAt = 0, lastDecodedAt = 0, lastDecodedRaw = '';
+let lastStatusAt = 0;
+const video = $('preview');
+function hasLib() {
+  if (typeof ZXingBrowser === 'undefined') {
+    $('cameraError').textContent = '辨識程式未載入，請檢查網路後重新整理網頁。';
+    return false;
+  }
+  return true;
+}
+function makeReader() {
+  return new ZXingBrowser.BrowserMultiFormatOneDReader(new Map([[TRY_HARDER, true]]), {
+    delayBetweenScanAttempts: 160, delayBetweenScanSuccess: 650, tryPlayVideoTimeout: 10000
+  });
+}
+const formatNames = ['AZTEC','CODABAR','CODE 39','CODE 93','CODE 128','DATA MATRIX','EAN 8','EAN 13','ITF','MAXICODE','PDF 417','QR CODE','RSS 14','RSS EXPANDED','UPC A','UPC E','UPC EAN EXTENSION'];
+function showDecoded(result, source) {
+  const raw = result.getText(), now = Date.now();
+  if (source === '相機掃描' && raw === lastDecodedRaw && now - lastDecodedAt < 2200) return;
+  lastDecodedAt = now; lastDecodedRaw = raw;
+  present(raw, formatNames[result.getBarcodeFormat()] || '未知格式', source);
+  $('cameraError').textContent = '✓ 已讀到條碼，請查看下方原始內容與比對結果。';
+}
+function setBusy(value) {
+  busy = value;
+  $('startBtn').disabled = value || running;
+  $('stopBtn').disabled = value || !running;
+  $('fileBtn').disabled = value;
+  $('cameraSelect').disabled = value || running;
+}
+async function stop() {
+  const current = controls; controls = null; running = false;
+  try { if (current) await current.stop(); } catch (e) { console.warn(e); }
+  // Always release the stream, including a failed or interrupted decoder.
+  if (video.srcObject) video.srcObject.getTracks().forEach(track => track.stop());
+  video.srcObject = null;
+  $('zoomControls').hidden = true;
+  setBusy(false);
+}
+async function listCameras() {
+  try {
+    const devices = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput');
+    const actualId = video.srcObject?.getVideoTracks()[0]?.getSettings().deviceId;
+    const selected = $('cameraSelect').value;
+    const auto = document.createElement('option'); auto.value = ''; auto.textContent = '自動選擇後置相機';
+    $('cameraSelect').replaceChildren(auto);
+    devices.forEach((d, i) => {
+      const option = document.createElement('option'); option.value = d.deviceId;
+      option.textContent = d.label || '相機 ' + (i + 1); $('cameraSelect').append(option);
+    });
+    $('cameraSelect').value = actualId || selected;
+  } catch (e) { console.warn(e); }
+}
+async function configureTrack() {
+  const track = video.srcObject?.getVideoTracks()[0];
+  if (!track) return;
+  const caps = track.getCapabilities?.() || {};
+  if (Array.isArray(caps.focusMode) && caps.focusMode.includes('continuous')) {
+    try { await track.applyConstraints({advanced: [{focusMode: 'continuous'}]}); } catch (e) { console.warn(e); }
+  }
+  if (caps.zoom && caps.zoom.max > caps.zoom.min) {
+    const zoom = $('zoom');
+    zoom.min = caps.zoom.min; zoom.max = Math.min(caps.zoom.max, Math.max(3, caps.zoom.min));
+    zoom.step = caps.zoom.step || 0.1;
+    zoom.value = track.getSettings().zoom || caps.zoom.min;
+    $('zoomControls').hidden = false;
+  }
+}
+$('zoom').oninput = async () => {
+  const track = video.srcObject?.getVideoTracks()[0];
+  if (!track) return;
+  try { await track.applyConstraints({advanced: [{zoom: Number($('zoom').value)}]}); }
+  catch { $('cameraError').textContent = '這個鏡頭不支援調整倍率，請調整手機與條碼的距離。'; }
+};
+$('startBtn').onclick = async () => {
+  if (busy || running || !hasLib()) return;
+  if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
+    $('cameraError').textContent = '請以 Safari 或 Chrome 開啟本網站的 HTTPS 網址。'; return;
+  }
+  setBusy(true); attempts = 0; lastDecodedAt = 0; startedAt = Date.now(); lastStatusAt = 0;
+  $('cameraError').textContent = '正在要求相機權限…'; $('scanDiagnostics').textContent = '正在啟動完整影像辨識';
+  const cameraId = $('cameraSelect').value;
+  const camera = cameraId ? {deviceId: {exact: cameraId}} : {facingMode: {ideal: 'environment'}};
+  const onFrame = (result, error) => {
+    attempts++;
+    if (result) showDecoded(result, '相機掃描');
+    const now = Date.now();
+    if (now - lastStatusAt > 1000) {
+      lastStatusAt = now;
+      const track = video.srcObject?.getVideoTracks()[0];
+      $('scanDiagnostics').textContent = '辨識引擎 ZXing｜影像 ' + video.videoWidth + ' × ' + video.videoHeight + '｜已嘗試 ' + attempts + ' 次｜' + (track?.label || '相機');
+      if (!lastDecodedAt && now - startedAt > 8000) {
+        $('cameraError').textContent = '持續辨識中，尚未讀到條碼。請將條碼橫放並保留左右白邊；拉遠至影像清楚。若仍模糊，停止相機後切換後置鏡頭，或改用清晰照片辨識。';
+      }
+    }
+    // NotFound, Checksum and Format errors are expected while searching.
+    if (error && !['NotFoundException','ChecksumException','FormatException'].includes(decodeErrorKind(error))) {
+      console.warn(error);
+      $('cameraError').textContent = '辨識發生錯誤：' + (error.message || error.name) + '。請停止後重試，或改用照片辨識。';
+    }
+  };
+  try {
+    scanner = makeReader();
+    try {
+      controls = await scanner.decodeFromConstraints({audio: false, video: {...camera, width: {ideal: 1920}, height: {ideal: 1080}}}, video, onFrame);
+    } catch (e) {
+      if (e?.name !== 'OverconstrainedError') throw e;
+      controls = await scanner.decodeFromConstraints({audio: false, video: camera}, video, onFrame);
+    }
+    running = true;
+    await configureTrack(); await listCameras();
+    if (!lastDecodedAt) $('cameraError').textContent = '相機已啟動，完整畫面辨識中。請將整條條碼橫放在畫面中央，保留左右白邊。';
+  } catch (e) {
+    await stop();
+    $('cameraError').textContent = '相機啟動失敗：' + (e?.message || String(e)) + '。請確認相機權限，或改用照片辨識。';
+  } finally { setBusy(false); }
+};
+$('stopBtn').onclick = async () => { await stop(); $('cameraError').textContent = '相機已停止，可切換鏡頭後重新開啟。'; };
+$('fileBtn').onclick = () => { if (!busy) $('fileInput').click(); };
+// Decode original-size photos; rotate and retry to support portrait captures.
+async function decodePhoto(file) {
+  const url = URL.createObjectURL(file), image = new Image();
+  try {
+    image.src = url; await image.decode();
+    const scale = Math.min(1, 2600 / Math.max(image.naturalWidth, image.naturalHeight));
+    const w = Math.round(image.naturalWidth * scale), h = Math.round(image.naturalHeight * scale);
+    const canvas = document.createElement('canvas'), reader = makeReader();
+    for (const angle of [0, 90, 180, 270]) {
+      canvas.width = angle % 180 ? h : w; canvas.height = angle % 180 ? w : h;
+      const context = canvas.getContext('2d', {willReadFrequently: true});
+      context.translate(canvas.width / 2, canvas.height / 2); context.rotate(angle * Math.PI / 180);
+      context.drawImage(image, -w / 2, -h / 2, w, h);
+      try { return reader.decodeFromCanvas(canvas); } catch (e) {
+        if (!['NotFoundException','ChecksumException','FormatException'].includes(decodeErrorKind(e))) throw e;
+      }
+      await new Promise(resolve => setTimeout(resolve, 0));
+    }
+    throw new Error('找不到可辨識的一維條碼');
+  } finally { URL.revokeObjectURL(url); }
+}
+$('fileInput').onchange = async e => {
+  const file = e.target.files?.[0]; if (!file || busy || !hasLib()) return;
+  await stop(); setBusy(true); $('cameraError').textContent = '正在辨識照片（含旋轉方向）…';
+  try { showDecoded(await decodePhoto(file), '圖片檔案'); }
+  catch (err) { $('cameraError').textContent = '照片未能解碼：' + (err?.message || String(err)) + '。請拍攝正面清晰近照，保留條碼左右白邊。'; }
+  finally { e.target.value = ''; setBusy(false); }
+};
+// Pause on leaving the page so the camera is released on mobile.
+document.addEventListener('visibilitychange', () => { if (document.hidden && running) void stop(); });
+
 $('manualBtn').onclick=()=>{const raw=$('manual').value.trim();if(!raw){$('cameraError').textContent='請先輸入測試字串';return}present(raw,'手動輸入／未經條碼驗證','手動模擬')};
 $('expected').oninput=()=>{if(last)present(last.raw,last.format,last.source)};
 $('copyBtn').onclick=async()=>{if(!last)return;try{await navigator.clipboard.writeText(last.raw);$('cameraError').textContent='已複製原始內容'}catch{$('cameraError').textContent='無法複製，請長按選取原始內容'}};
