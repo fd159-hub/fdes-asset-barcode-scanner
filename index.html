@@ -1,19 +1,39 @@
 <!doctype html>
 <html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#102b40"><title>復旦國小｜財產條碼測試</title>
 <style>
-:root{font-family:system-ui,-apple-system,'Noto Sans TC',sans-serif;color:#173044;background:#f2f6fa}*{box-sizing:border-box}body{margin:0}header{background:#102b40;color:white;padding:20px 16px}header h1{font-size:23px;margin:4px 0}header small{color:#bcd3e4}main{max-width:780px;margin:auto;padding:16px;display:grid;gap:14px}.panel{background:white;border:1px solid #dbe5ee;border-radius:15px;padding:17px;box-shadow:0 2px 8px #1830470b}h2{font-size:18px;margin:0 0 12px}p{line-height:1.6;margin:8px 0}.muted{color:#54697b;font-size:14px}label{font-size:14px;font-weight:650;display:block;margin:9px 0 6px}input,select{font-size:16px;width:100%;padding:11px;border:1px solid #a6b7c4;border-radius:10px;background:#fff;color:#183047}button{touch-action:manipulation;cursor:pointer;border:0;border-radius:10px;padding:12px 16px;background:#116a9d;color:#fff;font-size:16px;font-weight:650;min-height:46px}button.secondary{background:#e5edf4;color:#183047}button:disabled{opacity:.45;cursor:not-allowed}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.actions button{flex:1}#reader{overflow:hidden;border-radius:10px;background:#132432;min-height:60px}#reader video{width:100%!important;object-fit:contain}#reader img{max-width:100%}.status{border-radius:10px;padding:11px 13px;background:#edf3f8;font-weight:600}.status.ok{background:#dff6e9;color:#155b33}.status.warn{background:#fff1d6;color:#754b07}.status.bad{background:#fbe3e3;color:#8d2222}code{word-break:break-all;font-size:15px}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px 6px;border-bottom:1px solid #dfe8ee;vertical-align:top;text-align:left;overflow-wrap:anywhere}td button{min-height:34px;padding:6px 9px;font-size:13px}.overflow{overflow:auto}#readout{font-size:19px;font-weight:750;word-break:break-all;white-space:pre-wrap}#scanHelp{font-size:13px}footer{text-align:center;padding:16px;color:#526a7e;font-size:13px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:480px){.grid{grid-template-columns:1fr}main{padding:11px}.panel{padding:14px}} </style></head><body>
-<header><div style="max-width:780px;margin:auto"><small>第一階段｜僅供掃碼驗證，不會更動財產資料</small><h1>復旦國小｜財產條碼測試</h1><small>手機相機掃描・辨識條碼格式・比對財產編號・匯出測試紀錄</small></div></header>
+:root{font-family:system-ui,-apple-system,'Noto Sans TC',sans-serif;color:#173044;background:#f2f6fa}*{box-sizing:border-box}body{margin:0}header{background:#102b40;color:white;padding:20px 16px}header h1{font-size:23px;margin:4px 0}header small{color:#bcd3e4}main{max-width:780px;margin:auto;padding:16px;display:grid;gap:14px}.panel{background:white;border:1px solid #dbe5ee;border-radius:15px;padding:17px;box-shadow:0 2px 8px #1830470b}h2{font-size:18px;margin:0 0 12px}p{line-height:1.6;margin:8px 0}.muted{color:#54697b;font-size:14px}label{font-size:14px;font-weight:650;display:block;margin:9px 0 6px}input,select{font-size:16px;width:100%;padding:11px;border:1px solid #a6b7c4;border-radius:10px;background:#fff;color:#183047}button{touch-action:manipulation;cursor:pointer;border:0;border-radius:10px;padding:12px 16px;background:#116a9d;color:#fff;font-size:16px;font-weight:650;min-height:46px}button.secondary{background:#e5edf4;color:#183047}button:disabled{opacity:.45;cursor:not-allowed}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.actions button{flex:1}#reader{overflow:hidden;border-radius:10px;background:#132432;min-height:60px}#reader video{width:100%!important;object-fit:contain;display:block;max-height:45svh}#cameraError{margin:10px 0;line-height:1.6}#quickResult{font-size:20px;white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0}#appStatus{font-size:14px;color:#bcd3e4;margin-top:10px}#reader img{max-width:100%}.status{border-radius:10px;padding:11px 13px;background:#edf3f8;font-weight:600}.status.ok{background:#dff6e9;color:#155b33}.status.warn{background:#fff1d6;color:#754b07}.status.bad{background:#fbe3e3;color:#8d2222}code{word-break:break-all;font-size:15px}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px 6px;border-bottom:1px solid #dfe8ee;vertical-align:top;text-align:left;overflow-wrap:anywhere}td button{min-height:34px;padding:6px 9px;font-size:13px}.overflow{overflow:auto}#readout{font-size:19px;font-weight:750;word-break:break-all;white-space:pre-wrap}#scanHelp{font-size:13px}footer{text-align:center;padding:16px;color:#526a7e;font-size:13px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:480px){.grid{grid-template-columns:1fr}main{padding:11px}.panel{padding:14px}} </style></head><body>
+<header><div style="max-width:780px;margin:auto"><small>v0.3｜第一階段｜僅供掃碼驗證，不會更動財產資料</small><h1>復旦國小｜財產條碼測試</h1><p id="appStatus" role="status">正在載入網頁程式…</p><noscript>JavaScript 已停用，請啟用後重新整理。</noscript><small>手機相機掃描・辨識條碼格式・比對財產編號・匯出測試紀錄</small></div></header>
 <main>
 <section class="panel"><h2>① 財產標籤上的編號</h2><label for="expected">預期財產編號（請依現場標籤核對）</label><input id="expected" value="314010103-000838" autocapitalize="off" spellcheck="false"><p class="muted">預填值來自目前提供的標籤照片。測試其他標籤時請修改此欄。系統只比對字元，並不代表已連線至學校資料庫。</p></section>
 <section class="panel"><h2>② 掃描一維條碼</h2><label for="cameraSelect">相機鏡頭（先停止相機才能切換）</label><select id="cameraSelect"><option value="">自動選擇後置相機</option></select>
-<div id="reader" aria-label="相機掃描預覽"><video id="preview" muted autoplay playsinline></video></div>
-<p id="scanDiagnostics" class="muted" role="status">v0.2｜完整解析度辨識｜相機啟動後顯示影像尺寸與辨識次數</p>
-<div id="zoomControls" hidden><label for="zoom">鏡頭倍率（僅支援的裝置顯示）</label><input id="zoom" type="range" min="1" max="3" step="0.1" value="1"></div><p id="scanHelp" class="muted">iPhone 請用 Safari 或 Chrome 開啟並允許相機。將整條條碼橫放在畫面中央、左右保留白邊，先從約 20～30 公分開始調整距離，直到影像清楚；不必讓條碼填滿畫面。若模糊，停止後可切換其他後置鏡頭。</p><div class="actions"><button id="startBtn">開啟相機掃描</button><button id="stopBtn" class="secondary" disabled>停止相機</button></div><div class="actions"><button id="fileBtn" class="secondary">改用照片辨識</button><input type="file" accept="image/*" id="fileInput" hidden></div><label for="manual">手動輸入解碼字串（測試比對功能）</label><input id="manual" placeholder="輸入掃碼槍或其他 App 讀到的原始字串" autocapitalize="off" spellcheck="false"><div class="actions"><button id="manualBtn" class="secondary">執行手動比對（非真實掃描）</button></div><p id="cameraError" class="muted" role="status"></p></section>
+<p id="cameraError" class="status warn" role="status" aria-live="polite">尚未啟動相機。請按「開啟相機掃描」。</p><div id="quickResult" class="status ok" role="status" hidden></div><div id="reader" aria-label="相機掃描預覽"><video id="preview" muted autoplay playsinline></video></div>
+<p id="scanDiagnostics" class="muted" role="status">v0.3｜完整解析度辨識｜相機啟動後顯示影像尺寸與辨識次數</p>
+<div id="zoomControls" hidden><label for="zoom">鏡頭倍率（僅支援的裝置顯示）</label><input id="zoom" type="range" min="1" max="3" step="0.1" value="1"></div><p id="scanHelp" class="muted">iPhone 請用 Safari 或 Chrome 開啟並允許相機。將整條條碼橫放在畫面中央、左右保留白邊，先從約 20～30 公分開始調整距離，直到影像清楚；不必讓條碼填滿畫面。若模糊，停止後可切換其他後置鏡頭。</p><div class="actions"><button id="startBtn">開啟相機掃描</button><button id="stopBtn" class="secondary" disabled>停止相機</button></div><div class="actions"><button id="fileBtn" class="secondary">改用照片辨識</button><input type="file" accept="image/*" id="fileInput" hidden></div><div class="actions"><button id="soundTestBtn" class="secondary">測試提示音</button><button id="engineTestBtn" class="secondary">測試辨識引擎</button></div><p id="soundStatus" class="muted" role="status">成功解碼時會嘗試播放提示音，讀取結果也會直接顯示在相機上方。</p><img id="testBarcode" hidden alt="內建測試條碼，非現場掃描結果" src="data:image/png;base64,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"><label for="manual">手動輸入解碼字串（測試比對功能）</label><input id="manual" placeholder="輸入掃碼槍或其他 App 讀到的原始字串" autocapitalize="off" spellcheck="false"><div class="actions"><button id="manualBtn" class="secondary">執行手動比對（非真實掃描）</button></div></section>
 <section class="panel"><h2>③ 解碼與比對結果</h2><div id="resultStatus" class="status" role="status">尚未掃描</div><label>條碼原始內容</label><div id="readout">—</div><div class="grid"><div><label>辨識格式</label><p id="format">—</p></div><div><label>比對結果</label><p id="compare">—</p></div></div><p class="muted" id="detail">完全相同才列為吻合。另顯示移除空格與連字號後的比較結果，供判斷編碼差異；不會自動把近似值視為吻合。</p><div class="actions"><button id="saveBtn" disabled>加入測試紀錄</button><button id="copyBtn" class="secondary" disabled>複製條碼內容</button></div></section>
 <section class="panel"><h2>④ 測試紀錄（僅存在這台裝置）</h2><p class="muted">建議測試不同年份及批次的 10～20 個財產標籤。紀錄暫存在瀏覽器 localStorage，清除瀏覽器資料可能會遺失，請定期匯出 CSV。不要放入人員個資。</p><div class="overflow"><table><thead><tr><th>時間</th><th>原始內容</th><th>格式</th><th>預期編號</th><th>結果</th><th></th></tr></thead><tbody id="rows"><tr><td colspan="6">尚無紀錄</td></tr></tbody></table></div><div class="actions"><button id="exportBtn">匯出 CSV（Excel 可開啟）</button><button id="clearBtn" class="secondary">清除紀錄</button></div></section>
-</main><footer>測試版 v0.2｜不需帳號・無後端連線・不自動上傳影像或掃描資料｜<a href="./LICENSE-zxing-browser.txt">ZXing Browser MIT 授權</a>・<a href="./LICENSE-zxing-library.txt">ZXing Library Apache-2.0 授權</a></footer>
-<script src="./zxing-browser.min.js"></script>
-<script>
+</main><footer>測試版 v0.3｜不需帳號・無後端連線・不自動上傳影像或掃描資料｜<a href="./LICENSE-zxing-browser.txt">ZXing Browser MIT 授權</a>・<a href="./LICENSE-zxing-library.txt">ZXing Library Apache-2.0 授權</a></footer>
+<script id="appBoot">
+window.scanAppReady = false;
+window.scanEngineFailed = false;
+window.updateLoadStatus = function() {
+  var status = document.getElementById('appStatus');
+  var loaded = typeof ZXingBrowser !== 'undefined';
+  status.textContent = 'v0.3｜' + (!window.scanAppReady ? '網頁程式尚未就緒' : window.scanEngineFailed ? '辨識引擎載入失敗，請重新整理' : loaded ? '網頁與辨識引擎已就緒' : '網頁已就緒，正在載入辨識引擎…');
+};
+window.scanAssetFailed = function() { window.scanEngineFailed = true; window.updateLoadStatus(); };
+window.addEventListener('error', function(event) {
+  var text = event.message || '網頁資源載入失敗';
+  var box = document.getElementById('cameraError');
+  if (box) { box.className = 'status bad'; box.textContent = '網頁錯誤：' + text + '。請回報此訊息。'; }
+});
+window.addEventListener('unhandledrejection', function(event) {
+  var box = document.getElementById('cameraError');
+  if (box) { box.className = 'status bad'; box.textContent = '程式未完成：' + (event.reason && event.reason.message || String(event.reason)) + '。請回報此訊息。'; }
+});
+setTimeout(function() { window.updateLoadStatus(); }, 8000);
+</script>
+<script async src="./zxing-browser.min.js?v=03" onload="window.updateLoadStatus()" onerror="window.scanAssetFailed()"></script>
+<script id="scannerApp">
 (()=>{'use strict';
 const $=id=>document.getElementById(id), LS='fdes_asset_scan_tests_v01';
 let scanner=null,running=false,last=null,history=[];
@@ -22,6 +42,71 @@ const normal=s=>String(s??'').replace(/[\s\-－–—]/g,'').toUpperCase();
 function compare(raw,exp){if(!exp.trim())return ['未設定預期編號','unset'];if(raw===exp)return ['完全吻合','match'];if(normal(raw)===normal(exp))return ['格式不同但去除空白／連字號後相同','normalized'];return ['不吻合','mismatch']}
 function present(raw,format,source){const expected=$('expected').value.trim(),[message,type]=compare(raw,expected);last={time:new Date().toISOString(),raw,format,expected,result:message,source};$('readout').textContent=raw;$('format').textContent=format;$('compare').textContent=message;$('resultStatus').className='status '+(type==='match'?'ok':type==='mismatch'?'bad':'warn');$('resultStatus').textContent=type==='match'?'✓ 與標籤上財產編號完全一致':type==='mismatch'?'⚠ 與預期財產編號不一致':message;$('detail').textContent='來源：'+source+'。'+(type==='normalized'?'格式接近不等於已證實相同，請人工確認原始字串。':type==='mismatch'?'請確認標籤編號是否輸入正確；亦可能是條碼另有內部編碼。':'請記錄多張不同批次標籤以驗證規則。');$('saveBtn').disabled=false;$('copyBtn').disabled=false;if(navigator.vibrate)navigator.vibrate(80)}
 function formatName(name){return String(name||'未知格式').replace(/^CODE_/,'CODE ').replaceAll('_',' ')}
+let audioContext = null, heartbeat = null, latestFrameAt = 0;
+function scannerNotice(text, type = 'warn') {
+  $('cameraError').textContent = text;
+  $('cameraError').className = 'status ' + type;
+}
+// Resume audio directly inside a tap handler, before camera permission awaits.
+function unlockSound() {
+  try {
+    const Audio = window.AudioContext || window.webkitAudioContext;
+    if (!Audio) return Promise.resolve(false);
+    audioContext = audioContext || new Audio();
+    return audioContext.resume().then(() => audioContext.state === 'running').catch(() => false);
+  } catch { return Promise.resolve(false); }
+}
+function beep() {
+  if (!audioContext || audioContext.state !== 'running') return false;
+  try {
+    const oscillator = audioContext.createOscillator(), gain = audioContext.createGain();
+    oscillator.connect(gain); gain.connect(audioContext.destination);
+    const now = audioContext.currentTime;
+    oscillator.frequency.setValueAtTime(1050, now);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.18, now + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+    oscillator.start(now); oscillator.stop(now + 0.2);
+    return true;
+  } catch { return false; }
+}
+$('soundTestBtn').onclick = async () => {
+  const ready = await unlockSound();
+  const played = ready && beep();
+  $('soundStatus').textContent = played ? '已送出測試音；若聽不到，請確認手機媒體音量與音訊輸出。' : '瀏覽器未能啟用聲音。視覺提示仍可使用，請再點一次測試音。';
+};
+$('engineTestBtn').onclick = async () => {
+  if (busy || running) { scannerNotice('請先停止相機，再執行辨識引擎測試。'); return; }
+  if (!hasLib()) return;
+  $('engineTestBtn').disabled = true;
+  scannerNotice('正在解碼內建測試條碼（不會加入財產紀錄）…');
+  try {
+    const image = $('testBarcode'); await image.decode();
+    const result = await makeReader().decodeFromImageElement(image);
+    if (result.getText() !== '314010103-000838') throw new Error('測試結果不符合預期');
+    scannerNotice('✓ 辨識引擎測試通過（內建 CODE 128）。這是測試圖片，尚未讀取現場財產標籤。', 'ok');
+  } catch (e) {
+    scannerNotice('辨識引擎測試失敗：' + (e.message || decodeErrorKind(e) || String(e)) + '。請將這段訊息提供給維護人員。', 'bad');
+  } finally { $('engineTestBtn').disabled = false; }
+};
+function startHeartbeat() {
+  clearInterval(heartbeat);
+  heartbeat = setInterval(() => {
+    if (!running) return;
+    const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+    $('scanDiagnostics').textContent = '掃描中 ' + elapsed + ' 秒｜影像 ' + video.videoWidth + ' × ' + video.videoHeight + '｜已辨識 ' + attempts + ' 次';
+    if (!lastDecodedAt) {
+      if (Date.now() - latestFrameAt > 5000) {
+        scannerNotice('相機已開啟，但辨識程序超過 5 秒沒有回報。請停止相機後執行「測試辨識引擎」。', 'bad');
+      } else if (elapsed >= 8) {
+        scannerNotice('已辨識 ' + attempts + ' 次，尚未找到條碼。請調整對焦、距離與反光；也可停止相機後，改用正面清晰照片辨識。');
+      } else {
+        scannerNotice('相機運作中｜已辨識 ' + attempts + ' 次，尚未找到條碼。請將整條條碼與左右白邊放入畫面。');
+      }
+    }
+  }, 1000);
+}
+
 // ZXing browser 0.1.5 bundles @zxing/library. TRY_HARDER is enum value 3.
 const TRY_HARDER = 3;
 const decodeErrorKind = error => error?.getKind?.() || error?.name;
@@ -46,6 +131,10 @@ function showDecoded(result, source) {
   if (source === '相機掃描' && raw === lastDecodedRaw && now - lastDecodedAt < 2200) return;
   lastDecodedAt = now; lastDecodedRaw = raw;
   present(raw, formatNames[result.getBarcodeFormat()] || '未知格式', source);
+  $('quickResult').hidden = false;
+  $('quickResult').textContent = '✓ 已讀取條碼：\n' + raw + '\n' + (formatNames[result.getBarcodeFormat()] || '未知格式') + '｜' + source;
+  scannerNotice('✓ 已讀到條碼，結果顯示於相機上方。', 'ok');
+  beep();
   $('cameraError').textContent = '✓ 已讀到條碼，請查看下方原始內容與比對結果。';
 }
 function setBusy(value) {
@@ -56,6 +145,7 @@ function setBusy(value) {
   $('cameraSelect').disabled = value || running;
 }
 async function stop() {
+  clearInterval(heartbeat); heartbeat = null;
   const current = controls; controls = null; running = false;
   try { if (current) await current.stop(); } catch (e) { console.warn(e); }
   // Always release the stream, including a failed or interrupted decoder.
@@ -100,16 +190,20 @@ $('zoom').oninput = async () => {
   catch { $('cameraError').textContent = '這個鏡頭不支援調整倍率，請調整手機與條碼的距離。'; }
 };
 $('startBtn').onclick = async () => {
-  if (busy || running || !hasLib()) return;
+  if (busy || running) return;
+  scannerNotice('已按下啟動，正在檢查相機與辨識引擎…');
+  void unlockSound();
+  if (!hasLib()) return;
   if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
     $('cameraError').textContent = '請以 Safari 或 Chrome 開啟本網站的 HTTPS 網址。'; return;
   }
+  $('quickResult').hidden = true;
   setBusy(true); attempts = 0; lastDecodedAt = 0; startedAt = Date.now(); lastStatusAt = 0;
   $('cameraError').textContent = '正在要求相機權限…'; $('scanDiagnostics').textContent = '正在啟動完整影像辨識';
   const cameraId = $('cameraSelect').value;
   const camera = cameraId ? {deviceId: {exact: cameraId}} : {facingMode: {ideal: 'environment'}};
   const onFrame = (result, error) => {
-    attempts++;
+    attempts++; latestFrameAt = Date.now();
     if (result) showDecoded(result, '相機掃描');
     const now = Date.now();
     if (now - lastStatusAt > 1000) {
@@ -134,7 +228,7 @@ $('startBtn').onclick = async () => {
       if (e?.name !== 'OverconstrainedError') throw e;
       controls = await scanner.decodeFromConstraints({audio: false, video: camera}, video, onFrame);
     }
-    running = true;
+    running = true; latestFrameAt = Date.now(); startHeartbeat();
     await configureTrack(); await listCameras();
     if (!lastDecodedAt) $('cameraError').textContent = '相機已啟動，完整畫面辨識中。請將整條條碼橫放在畫面中央，保留左右白邊。';
   } catch (e) {
@@ -143,7 +237,7 @@ $('startBtn').onclick = async () => {
   } finally { setBusy(false); }
 };
 $('stopBtn').onclick = async () => { await stop(); $('cameraError').textContent = '相機已停止，可切換鏡頭後重新開啟。'; };
-$('fileBtn').onclick = () => { if (!busy) $('fileInput').click(); };
+$('fileBtn').onclick = () => { if (!busy) { void unlockSound(); $('fileInput').click(); } };
 // Decode original-size photos; rotate and retry to support portrait captures.
 async function decodePhoto(file) {
   const url = URL.createObjectURL(file), image = new Image();
@@ -183,5 +277,7 @@ function persist(){try{localStorage.setItem(LS,JSON.stringify(history))}catch{$(
 function render(){const tbody=$('rows');tbody.replaceChildren();if(!history.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=6;td.textContent='尚無紀錄';tr.append(td);tbody.append(tr);return}history.forEach((r,i)=>{const tr=document.createElement('tr');[new Date(r.time).toLocaleString('zh-TW'),r.raw,r.format,r.expected,r.result].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.append(td)});const td=document.createElement('td'),b=document.createElement('button');b.className='secondary';b.textContent='刪除';b.onclick=()=>{history.splice(i,1);persist();render()};td.append(b);tr.append(td);tbody.append(tr)})}
 $('exportBtn').onclick=()=>{const columns=['time','raw','format','expected','result','source'];const safe=v=>{let s=String(v??'');if(/^[\s]*[=+@\-\t\r]/.test(s))s="'"+s;return '"'+s.replaceAll('"','""')+'"'};const csv='\ufeff'+[['時間','條碼原始內容','辨識格式','標籤財產編號','比對結果','來源'].map(safe).join(','),...history.map(r=>columns.map(c=>safe(r[c])).join(','))].join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));const a=document.createElement('a');a.href=url;a.download='財產條碼測試_'+new Date().toISOString().slice(0,10)+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),3000)};
 $('clearBtn').onclick=()=>{if(!confirm('確定刪除這台裝置上所有測試紀錄？此操作無法復原。'))return;history=[];persist();render()};render();
+window.scanAppReady = true;
+window.updateLoadStatus?.();
 })();
 </script></body></html>
